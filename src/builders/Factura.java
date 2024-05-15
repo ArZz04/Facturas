@@ -12,16 +12,15 @@ public class Factura {
     private Fecha fechaFactura;
     private Vendedor vendedor;
 
-    public Factura(int id, Fecha fechaFactura, float subTotal, float iva, float total, Vendedor vendedor){
+    public Factura(int id, Fecha fechaFactura, float subTotal, float iva, float total, ArrayList<Productos> productos, Vendedor vendedor) {
         this.id = id;
         this.fechaFactura = fechaFactura;
         this.subTotal = subTotal;
         this.iva = iva;
         this.total = total;
-        this.productos = new ArrayList<>();
+        this.productos = productos;
         this.vendedor = vendedor;
     }
-
     public Factura(){}
 
     // Getters

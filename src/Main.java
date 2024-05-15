@@ -3,10 +3,7 @@ import data.controllerClientes;
 import data.controllerProductos;
 import data.controllerVendedores;
 
-import java.util.ArrayList;
-import java.util.InputMismatchException;
-import java.util.Objects;
-import java.util.Scanner;
+import java.util.*;
 
 
 public class Main {
@@ -136,7 +133,67 @@ public class Main {
                             controllerProductos.addProducto(producto);
                             break;
                         case 4:
+                            Random rand = new Random();
                             System.out.println("-----------------------| VENDER |-----------------------");
+                            System.out.print("RFC del cliente: ");
+                            String rfcClienteV = rc.next();
+                            Cliente clienteV = controllerClientes.findCliente(rfcClienteV);
+
+                            if (Objects.isNull(clienteV)){
+                                System.out.println("--------------------------------------------------");
+                                System.out.println("El cliente no existe, por favor ingrese otro.");
+                                break;
+                            }
+                            System.out.println("------------------| AGREGAR PRODUCTO |------------------");
+                            System.out.print("ID del producto: ");
+                            int idProductoV = rc.nextInt();
+                            Productos productoV = controllerProductos.findProducto(idProductoV);
+                            if (Objects.isNull(productoV)){
+                                System.out.println("--------------------------------------------------");
+                                System.out.println("El producto no existe, por favor ingrese otro.");
+                                break;
+                            }
+                            System.out.print("---------------| " + productoV.getDescripcion() +" agregado a la factura | ");
+                            System.out.println("--------------------------------------------------");
+                            System.out.println("¿Desea agregar otro producto?");
+                            System.out.println("1. Si");
+                            System.out.println("2. No");
+                            System.out.print("-> ");
+                            int op2 = rc.nextInt();
+                            while (op2 == 1){
+                                System.out.println("------------------| AGREGAR PRODUCTO |------------------");
+                                System.out.print("ID del producto: ");
+                                idProductoV = rc.nextInt();
+                                productoV = controllerProductos.findProducto(idProductoV);
+                                if (Objects.isNull(productoV)){
+                                    System.out.println("--------------------------------------------------");
+                                    System.out.println("El producto no existe, por favor ingrese otro.");
+                                    break;
+                                }
+                                System.out.print("---------------| " + productoV.getDescripcion() +" agregado a la factura | ");
+                                System.out.println("--------------------------------------------------");
+                                System.out.println("¿Desea agregar otro producto?");
+                                System.out.println("1. Si");
+                                System.out.println("2. No");
+                                System.out.print("-> ");
+                                op2 = rc.nextInt();
+                            }
+                            System.out.println("--------------------------------------------------");
+                            System.out.println("Ingrese el usuario del vendedor: ");
+                            int idVendedor = rc.nextInt();
+                            Vendedor vendedorV = controllerVendedores.findVendedor(idVendedor);
+                            if (Objects.isNull(vendedorV)){
+                                System.out.println("--------------------------------------------------");
+                                System.out.println("El vendedor no existe, por favor ingrese otro.");
+                                break;
+                            }
+                            System.out.println("--------------------------------------------------");
+                            int nFactura = rand.nextInt(10000); // Genera un número aleatorio entre 0 y 9999
+
+                            //Factura factura = new Factura(nFactura, new Fecha(Date.dai), clienteV, vendedorV, new ArrayList<>());
+
+                            System.out.println("---------------| " + vendedorV.getNombre() + " le realizo la factura " + nFactura + " | ");
+
                             break;
                         case 5:
 
@@ -167,7 +224,22 @@ public class Main {
                             System.out.println("-------------------| BUSCAR VENDEDOR |------------------");
                             try {
                                 System.out.print("ID del vendedor: ");
-                                int idVendedor = rc.nextInt();
+                                int idVendedorr = rc.nextInt();
+                                Vendedor vendedorr = controllerVendedores.findVendedor(idVendedorr);
+                                if (Objects.isNull(vendedorr)){
+                                    System.out.println("--------------------------------------------------");
+                                    System.out.println("El vendedor no existe, por favor ingrese otro.");
+                                    break;
+                                }
+                                System.out.println("--------------------------------------------------");
+                                //listar sus ventas
+                                //mostrar comision y sueldo neto
+                                System.out.println("Vendedor: " + vendedorr.getNombre() + " " + vendedorr.getApellidoP() + " " + vendedorr.getApellidoM());
+                                System.out.println("Area: " + vendedorr.getArea());
+                                System.out.println("Porcentaje de Comision: " + vendedorr.getPorcentajeComision());
+                                System.out.println("Sueldo Base: " + vendedorr.getSueldoBase());
+                                System.out.println("Sueldo Neto: " + vendedorr.getSueldoBase() * vendedorr.getPorcentajeComision() / 100);
+                                System.out.println("--------------------------------------------------");
 
                             } catch (InputMismatchException e) {
                                 System.out.println("---------------------------------------------------------");
