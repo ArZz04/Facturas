@@ -4,8 +4,10 @@ import java.util.ArrayList;
 
 public class Factura {
 
-    private int id;
-    private float subTotal, iva, total;
+    private static int id;
+    private static float subTotal;
+    private static float iva;
+    private static float total;
     private ArrayList<Productos> productos;
     private Fecha fechaFactura;
     private Vendedor vendedor;
@@ -19,6 +21,8 @@ public class Factura {
         this.productos = new ArrayList<>();
         this.vendedor = vendedor;
     }
+
+    public Factura(){}
 
     // Getters
     public int getId() {
@@ -48,7 +52,6 @@ public class Factura {
     public Vendedor getVendedor() {
         return vendedor;
     }
-
     // Setters
     public void setId(int id) {
         this.id = id;

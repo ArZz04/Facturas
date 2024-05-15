@@ -1,5 +1,7 @@
 import builders.*;
-import data.FileManager;
+import data.controllerClientes;
+import data.controllerProductos;
+import data.controllerVendedores;
 
 import java.util.ArrayList;
 import java.util.InputMismatchException;
@@ -16,11 +18,12 @@ public class Main {
 
     public static void main(String[] args) {
 
-        clientes = FileManager.loadClientes("src/data/clientes.txt");
-        vendedores = FileManager.loadVendedores("src/data/vendedores.txt");
-        productos = FileManager.loadProductos("src/data/productos.txt");
+        clientes = controllerClientes.loadClientes("src/data/clientes.txt");
+        vendedores = controllerVendedores.loadVendedores("src/data/vendedores.txt");
+        productos = controllerProductos.loadProductos("src/data/productos.txt");
 
         int op;
+        try {
             while (true) {
 
                 System.out.println("----------------------| FACTURAS |----------------------");
@@ -32,7 +35,6 @@ public class Main {
                 System.out.println("6. Buscar Vendedor");
                 System.out.println("0. Salir");
                 System.out.print("-> ");
-                try {
                     op = rc.nextInt();
                     switch (op) {
                         case 0:
@@ -50,6 +52,13 @@ public class Main {
                             try {
                                 System.out.print("RFC: ");
                                 rfc = rc.next();
+
+                                if (!controllerClientes.verifyCliente(rfc)){
+                                    System.out.println("--------------------------------------------------");
+                                    System.out.println("El RFC ya existe, por favor ingrese otro.");
+                                    break;
+                                }
+
                                 System.out.print("Domicilio: ");
                                 domicilio = rc.next();
                             } catch (Exception e) {
@@ -59,6 +68,7 @@ public class Main {
 
                             Cliente cliente = new Cliente(rfc, domicilio, personaCliente.getNombre(), personaCliente.getApellidoP(), personaCliente.getApellidoM(), personaCliente.getFechaNacimiento(), compras);
                             clientes.add(cliente);
+                            controllerClientes.addCliente(cliente);
                             System.out.println("---------------------| Su RFC es: " + cliente.getRfc() + " |-------------------------");
                             break;
                         case 2:
@@ -73,6 +83,13 @@ public class Main {
                             try {
                                 System.out.print("ID: ");
                                 id = rc.nextInt();
+
+                                if (controllerVendedores.verificarVendedor(id)){
+                                    System.out.println("--------------------------------------------------");
+                                    System.out.println("El ID de producto ya existe, por favor ingrese otro.");
+                                    break;
+                                }
+
                                 System.out.print("Area: ");
                                 area = rc.next();
                                 System.out.print("Porcentaje de Comision: ");
@@ -86,6 +103,7 @@ public class Main {
 
                             Vendedor vendedor = new Vendedor(id, area, comision, sueldoBase, personaVendedor.getNombre(), personaVendedor.getApellidoP(), personaVendedor.getApellidoM(), personaVendedor.getFechaNacimiento());
                             vendedores.add(vendedor);
+                            controllerVendedores.addVendedor(vendedor);
                             System.out.println("---------------------| Su ID es: " + vendedor.getId() + " |-------------------------");
                             break;
                         case 3:
@@ -97,6 +115,13 @@ public class Main {
                             try {
                                 System.out.print("ID: ");
                                 idProducto = rc.nextInt();
+
+                                if (controllerProductos.verificarProducto(idProducto)){
+                                    System.out.println("--------------------------------------------------");
+                                    System.out.println("El ID de producto ya existe, por favor ingrese otro.");
+                                    break;
+                                }
+
                                 System.out.print("Descripcion: ");
                                 descripcion = rc.next();
                                 System.out.print("Precio: ");
@@ -108,6 +133,7 @@ public class Main {
                             Productos producto = new Productos(idProducto, descripcion, precio);
                             System.out.println("---------------------| El ID de : " + producto.getDescripcion() + " es: " + producto.getId() + " |-------------------------");
                             productos.add(producto);
+                            controllerProductos.addProducto(producto);
                             break;
                         case 4:
                             System.out.println("-----------------------| VENDER |-----------------------");
@@ -115,14 +141,27 @@ public class Main {
                         case 5:
 
                             System.out.println("-------------| LISTAR FACTURAS DE CLIENTE |-------------");
-                            try {
                                 System.out.print("RFC del cliente: ");
-                                String idCliente = rc.next();
+                                String rfcCliente = rc.next();
 
-                            } catch (Exception e) {
+                                Cliente cliente1 = controllerClientes.findCliente(rfcCliente);
+                                if (Objects.isNull(cliente1)){
+                                    System.out.println("--------------------------------------------------");
+                                    System.out.println("El cliente no existe, por favor ingrese otro.");
+                                    break;
+                                }
+
+                                System.out.println("-------------| FACTURAS DEL USUARIO |-------------");
+                                ArrayList<Factura> facturas = cliente1.getCompras();
+                                if (facturas.isEmpty()) {
+                                    System.out.println("------------------| No hay facturas |------------------");
+                                } else {
+                                    for (Factura factura : facturas) {
+                                        System.out.println(factura);
+                                    }
+                                }
                                 System.out.println("--------------------------------------------------");
-                                System.out.println("Por favor, ingrese los datos correctamente.");
-                            }
+
                             break;
                         case 6:
                             System.out.println("-------------------| BUSCAR VENDEDOR |------------------");
@@ -130,18 +169,22 @@ public class Main {
                                 System.out.print("ID del vendedor: ");
                                 int idVendedor = rc.nextInt();
 
-
                             } catch (InputMismatchException e) {
                                 System.out.println("---------------------------------------------------------");
                                 System.out.println("Por favor, ingrese un número entero como ID de vendedor.");
                                 rc.nextLine();
                             }
                             break;
-                    }
-                } finally {
-                    rc.close();
+                        default:
+                            System.out.println("Opción no válida, por favor ingrese una opción correcta.");
+                            break;
                 }
             }
+        }catch (InputMismatchException e) {
+            System.out.println("Por favor, ingrese una opción válida.");
+        } finally {
+            rc.close(); // Cerrar Scanner después de salir del bucle
+        }
     }
 
 
@@ -177,7 +220,6 @@ public class Main {
                 rc.next();
             }
             apellidoM = rc.next();
-
             try {
                 System.out.print("Dia: ");
                 dia = rc.nextInt();
